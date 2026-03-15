@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-<version>3.4.1</version>
+<version>3.4.5</version>
         <relativePath/>
     </parent>
 
@@ -35,7 +35,7 @@
         <compiler.werror>false</compiler.werror>
 
         <!-- Dependency Versions -->
-        <spring-boot.version>3.4.1</spring-boot.version>
+        <spring-boot.version>3.4.5</spring-boot.version>
         <postgresql.version>42.7.7</postgresql.version>
         <flyway.version>10.21.0</flyway.version>
         <hibernate.version>6.6.4.Final</hibernate.version>
