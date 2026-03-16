@@ -18,7 +18,7 @@ env:
 jobs:
   security-scan:
     name: Security Scanning
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     permissions:
       contents: read
       security-events: write
@@ -127,7 +127,7 @@ jobs:
 
   code-quality:
     name: Code Quality & SAST
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
 
     steps:
       - uses: actions/checkout@v4
@@ -190,7 +190,7 @@ jobs:
 
   build-and-test:
     name: Build & Test
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
 
     services:
       postgres:
@@ -285,7 +285,7 @@ jobs:
 
   compliance-check:
     name: Compliance Verification
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
 
     steps:
       - uses: actions/checkout@v4
@@ -309,7 +309,7 @@ jobs:
 
   docker-build:
     name: Build Docker Image
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     needs: [build-and-test, security-scan]
 
     steps:
@@ -350,7 +350,7 @@ jobs:
 
   container-release:
     name: Release Container (GHCR, multi-arch, signed)
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     needs: [build-and-test]
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
     permissions:
@@ -433,7 +433,7 @@ jobs:
 
   e2e-docker:
     name: E2E (Docker Compose)
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     needs: [build-and-test]
     continue-on-error: true
 
@@ -463,7 +463,7 @@ jobs:
 
   deploy-staging:
     name: Deploy to Staging
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
     needs: [docker-build, compliance-check]
     if: github.ref == 'refs/heads/impl/java' && github.event_name == 'push'
     environment:
