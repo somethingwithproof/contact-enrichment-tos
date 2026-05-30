@@ -343,14 +343,6 @@
                         </goals>
                     </execution>
                     <!-- Coverage check disabled: insufficient tests for enforcement -->
-                    <!--
-                    <execution>
-                        <id>jacoco-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                    -->
                 </executions>
             </plugin>
 

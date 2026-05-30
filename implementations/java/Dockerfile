@@ -9,7 +9,14 @@ COPY implementations/java/pom.xml ./pom.xml
 # Prepare dependency cache and toolchains
 RUN --mount=type=cache,target=/root/.m2 sh -lc "\
   mkdir -p /root/.m2 && \
-printf '%b' '<toolchains>\n  <toolchain>\n    <type>jdk</type>\n    <provides>\n      <version>21</version>\n      <vendor>any</vendor>\n    </provides>\n    <configuration>\n      <jdkHome>/opt/java/openjdk</jdkHome>\n    </configuration>\n  </toolchain>\n</toolchains>\n' > /root/.m2/toolchains.xml && \
+  printf '%b' \
+    '<toolchains>\n' \
+    '  <toolchain>\n    <type>jdk</type>\n    <provides>\n' \
+    '      <version>21</version>\n      <vendor>any</vendor>\n' \
+    '    </provides>\n    <configuration>\n' \
+    '      <jdkHome>/opt/java/openjdk</jdkHome>\n' \
+    '    </configuration>\n  </toolchain>\n</toolchains>\n' \
+    > /root/.m2/toolchains.xml && \
   mvn -B -e -ntp -DskipTests -P local-fast dependency:go-offline\
 "
 
@@ -17,7 +24,14 @@ printf '%b' '<toolchains>\n  <toolchain>\n    <type>jdk</type>\n    <provides>\n
 COPY implementations/java/src ./src
 RUN --mount=type=cache,target=/root/.m2 sh -lc "\
   mkdir -p /root/.m2 && \
-printf '%b' '<toolchains>\n  <toolchain>\n    <type>jdk</type>\n    <provides>\n      <version>21</version>\n      <vendor>any</vendor>\n    </provides>\n    <configuration>\n      <jdkHome>/opt/java/openjdk</jdkHome>\n    </configuration>\n  </toolchain>\n</toolchains>\n' > /root/.m2/toolchains.xml && \
+  printf '%b' \
+    '<toolchains>\n' \
+    '  <toolchain>\n    <type>jdk</type>\n    <provides>\n' \
+    '      <version>21</version>\n      <vendor>any</vendor>\n' \
+    '    </provides>\n    <configuration>\n' \
+    '      <jdkHome>/opt/java/openjdk</jdkHome>\n' \
+    '    </configuration>\n  </toolchain>\n</toolchains>\n' \
+    > /root/.m2/toolchains.xml && \
   mvn -B -e -ntp -DskipTests -P local-fast package\
 "
 
