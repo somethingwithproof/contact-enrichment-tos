@@ -69,7 +69,7 @@ jobs:
           mvn -f implementations/java/pom.xml -P security-scan -DskipTests -Djacoco.skip=true -B verify
 
       - name: Upload Dependency-Check SARIF
-        if: always()
+        if: always() && hashFiles('implementations/java/target/security-reports/dependency-check-report.sarif') != ''
         continue-on-error: true
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -95,7 +95,7 @@ jobs:
             --sbom implementations/java/target/sbom/bom.json
 
       - name: Upload OSV results to GitHub Security
-        if: always()
+        if: always() && hashFiles('osv-results.sarif') != ''
         continue-on-error: true
         uses: github/codeql-action/upload-sarif@v3
         with:
@@ -111,7 +111,7 @@ jobs:
           output: 'trivy-results.sarif'
 
       - name: Upload Trivy results to GitHub Security
-        if: always()
+        if: always() && hashFiles('trivy-results.sarif') != ''
         continue-on-error: true
         uses: github/codeql-action/upload-sarif@v3
         with:
