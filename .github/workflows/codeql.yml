@@ -39,7 +39,36 @@ jobs:
         uses: github/codeql-action/init@b56ba49b26e50535fa1e7f7db0f4f7b4bf65d80d # v3
         with:
           languages: ${{ matrix.language }}
+      - name: Set up Java
+        if: matrix.language == 'java-kotlin'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+      - name: Write Maven toolchains.xml
+        if: matrix.language == 'java-kotlin'
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/toolchains.xml << 'EOF'
+          <toolchains>
+            <toolchain>
+              <type>jdk</type>
+              <provides>
+                <version>21</version>
+                <vendor>any</vendor>
+              </provides>
+              <configuration>
+                <jdkHome>${JAVA_HOME}</jdkHome>
+              </configuration>
+            </toolchain>
+          </toolchains>
+          EOF
+      - name: Build Java project
+        if: matrix.language == 'java-kotlin'
+        run: mvn -f implementations/java/pom.xml -DskipTests -Djacoco.skip=true -B compile
       - name: Autobuild
+        if: matrix.language != 'java-kotlin'
         uses: github/codeql-action/autobuild@b56ba49b26e50535fa1e7f7db0f4f7b4bf65d80d # v3
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@b56ba49b26e50535fa1e7f7db0f4f7b4bf65d80d # v3
