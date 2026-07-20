@@ -20,7 +20,7 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       serviceAccountName: {{ include "contact-enrichment.serviceAccountName" . }}
-      automountServiceAccountToken: false
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
       securityContext:
 {{- toYaml .Values.podSecurityContext | nindent 8 }}
       imagePullSecrets:
