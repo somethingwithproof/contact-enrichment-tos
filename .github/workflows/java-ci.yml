@@ -66,7 +66,7 @@ jobs:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         continue-on-error: true
         run: |
-          mvn -f implementations/java/pom.xml -P security-scan -DskipTests -Djacoco.skip=true -B verify
+          ./implementations/java/mvnw -f implementations/java/pom.xml -P security-scan -DskipTests -Djacoco.skip=true -B verify
 
       - name: Upload Dependency-Check SARIF
         if: always() && hashFiles('implementations/java/target/security-reports/dependency-check-report.sarif') != ''
@@ -172,7 +172,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          mvn -f implementations/java/pom.xml clean verify sonar:sonar \
+          ./implementations/java/mvnw -f implementations/java/pom.xml clean verify sonar:sonar \
             -Dsonar.projectKey=contact-enrichment-java \
             -Dsonar.coverage.jacoco.xmlReportPaths=implementations/java/target/site/jacoco/jacoco.xml \
             -Dsonar.java.binaries=implementations/java/target/classes
@@ -247,11 +247,11 @@ jobs:
 
       - name: Build with Maven
         run: |
-          mvn -f implementations/java/pom.xml clean compile -DskipTests
+          ./implementations/java/mvnw -f implementations/java/pom.xml clean compile -DskipTests
 
       - name: Run Unit Tests
         run: |
-          mvn -f implementations/java/pom.xml test -Dtest.profile=unit
+          ./implementations/java/mvnw -f implementations/java/pom.xml test -Dtest.profile=unit
 
       - name: Run Integration Tests
         env:
@@ -263,11 +263,11 @@ jobs:
           REDIS_HOST: localhost
           REDIS_PORT: 6379
         run: |
-          mvn -f implementations/java/pom.xml verify -Dtest.profile=integration
+          ./implementations/java/mvnw -f implementations/java/pom.xml verify -Dtest.profile=integration
 
       - name: Generate Test Coverage Report
         run: |
-          mvn -f implementations/java/pom.xml jacoco:report
+          ./implementations/java/mvnw -f implementations/java/pom.xml jacoco:report
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v4
