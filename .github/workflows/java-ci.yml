@@ -455,6 +455,9 @@ jobs:
       - name: Run E2E smoke
         env:
           DOCKER_BUILDKIT: 1
+          # Match integration tests for this disposable, empty database.
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+          SPRING_FLYWAY_ENABLED: "false"
         run: |
           bash deployments/docker/test.sh
 
