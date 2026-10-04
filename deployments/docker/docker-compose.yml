@@ -28,6 +28,8 @@ services:
       dockerfile: implementations/java/Dockerfile
     environment:
       SPRING_PROFILES_ACTIVE: dev
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-validate}
+      SPRING_FLYWAY_ENABLED: ${SPRING_FLYWAY_ENABLED:-true}
       SERVER_PORT: 8080
       DATABASE_URL: jdbc:postgresql://db:5432/contact_enrichment
       DATABASE_USERNAME: app

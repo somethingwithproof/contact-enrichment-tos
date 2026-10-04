@@ -66,7 +66,7 @@ jobs:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         continue-on-error: true
         run: |
-          mvn -f implementations/java/pom.xml -P security-scan -DskipTests -Djacoco.skip=true -B verify
+          ./implementations/java/mvnw -f implementations/java/pom.xml -P security-scan -DskipTests -Djacoco.skip=true -B verify
 
       - name: Upload Dependency-Check SARIF
         if: always() && hashFiles('implementations/java/target/security-reports/dependency-check-report.sarif') != ''
@@ -172,7 +172,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          mvn -f implementations/java/pom.xml clean verify sonar:sonar \
+          ./implementations/java/mvnw -f implementations/java/pom.xml clean verify sonar:sonar \
             -Dsonar.projectKey=contact-enrichment-java \
             -Dsonar.coverage.jacoco.xmlReportPaths=implementations/java/target/site/jacoco/jacoco.xml \
             -Dsonar.java.binaries=implementations/java/target/classes
@@ -247,11 +247,11 @@ jobs:
 
       - name: Build with Maven
         run: |
-          mvn -f implementations/java/pom.xml clean compile -DskipTests
+          ./implementations/java/mvnw -f implementations/java/pom.xml clean compile -DskipTests
 
       - name: Run Unit Tests
         run: |
-          mvn -f implementations/java/pom.xml test -Dtest.profile=unit
+          ./implementations/java/mvnw -f implementations/java/pom.xml test -Dtest.profile=unit
 
       - name: Run Integration Tests
         env:
@@ -263,11 +263,11 @@ jobs:
           REDIS_HOST: localhost
           REDIS_PORT: 6379
         run: |
-          mvn -f implementations/java/pom.xml verify -Dtest.profile=integration
+          ./implementations/java/mvnw -f implementations/java/pom.xml verify -Dtest.profile=integration
 
       - name: Generate Test Coverage Report
         run: |
-          mvn -f implementations/java/pom.xml jacoco:report
+          ./implementations/java/mvnw -f implementations/java/pom.xml jacoco:report
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -295,16 +295,15 @@ jobs:
         continue-on-error: true
         run: |
           # Check conventional commits format
-          npm install -g @commitlint/cli @commitlint/config-conventional
-          echo "module.exports = {extends: ['@commitlint/config-conventional']}" > commitlint.config.js
+          npm ci --ignore-scripts --prefix .github/commitlint
           # Fetch the base branch to ensure origin/${{ github.base_ref }} exists
           git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
-          git log --format=%B origin/${{ github.base_ref }}..HEAD | commitlint
+          git log --format=%B origin/${{ github.base_ref }}..HEAD | .github/commitlint/node_modules/.bin/commitlint --config .github/commitlint/commitlint.config.cjs
 
       - name: Check for TODOs without issue references
         continue-on-error: true
         run: |
-          # Warn if TODO/FIXME without issue number
+          # Warn if task markers lack an issue number
           ! grep -rn "TODO\|FIXME" implementations/java/src --exclude-dir=target | grep -v "#[0-9]"
 
   docker-build:
@@ -378,13 +377,13 @@ jobs:
         id: meta
         run: |
           IMAGE=ghcr.io/${{ github.repository_owner }}/contact-enrichment-java
-          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+          echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             TAG="${GITHUB_REF#refs/tags/}"
           else
             TAG="${GITHUB_SHA}"
           fi
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Build and push (multi-arch)
         id: build
@@ -413,7 +412,7 @@ jobs:
         env:
           COSIGN_EXPERIMENTAL: "true"
         run: |
-          DIGEST=$(echo '${{ steps.build.outputs.digest }}')
+          DIGEST='${{ steps.build.outputs.digest }}'
           IMAGE=${{ steps.meta.outputs.image }}@${DIGEST}
           cosign sign --yes "$IMAGE"
 
@@ -440,6 +439,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@54042514f505b273907334ae2b9cdbb9a0213c1a # v2.4.0
+        with:
+          version: v5.5.1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
       - name: Install jq
         run: |
           sudo apt-get update
@@ -448,6 +455,9 @@ jobs:
       - name: Run E2E smoke
         env:
           DOCKER_BUILDKIT: 1
+          # Match integration tests for this disposable, empty database.
+          SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+          SPRING_FLYWAY_ENABLED: "false"
         run: |
           bash deployments/docker/test.sh
 
