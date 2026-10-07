@@ -1,7 +1,9 @@
 # Contact Enrichment Platform - Trusted Operating System Edition
 
 [![Security: TOS-Compliant](https://img.shields.io/badge/security-TOS--compliant-green.svg)](docs/security/TOS_COMPLIANCE.md)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=somethingwithproof_contact-enrichment-tos&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=somethingwithproof_contact-enrichment-tos)
 [![License: Proprietary](https://img.shields.io/badge/license-Proprietary-red.svg)](LICENSE)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/somethingwithproof/contact-enrichment-tos/badge)](https://scorecard.dev/viewer/?uri=github.com/somethingwithproof/contact-enrichment-tos)
 
 A production-grade contact enrichment backend designed for **Trusted Operating Environments** with comprehensive data provenance, sharing tracking, and regulatory compliance (GDPR, CCPA, LGPD).
 
