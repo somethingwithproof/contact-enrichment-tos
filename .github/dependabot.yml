@@ -8,8 +8,6 @@ updates:
       time: "09:00"
     rebase-strategy: "auto"
     open-pull-requests-limit: 10
-    reviewers:
-      - "thomasvincent"
     labels:
       - "dependencies"
       - "maven"
@@ -33,8 +31,6 @@ updates:
       day: "monday"
       time: "09:00"
     rebase-strategy: "auto"
-    reviewers:
-      - "thomasvincent"
     labels:
       - "dependencies"
       - "ci"
@@ -46,8 +42,6 @@ updates:
       day: "monday"
       time: "09:00"
     rebase-strategy: "auto"
-    reviewers:
-      - "thomasvincent"
     labels:
       - "dependencies"
       - "docker"
@@ -61,8 +55,83 @@ updates:
         applies-to: version-updates
         update-types:
           - "major"
-  - package-ecosystem: "npm"
-    directory: "/"
+
+  - package-ecosystem: "gomod"
+    directory: "/implementations/go"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 10
+      day: "monday"
+      time: "09:00"
+    commit-message:
+      prefix: "build(deps)"
+    groups:
+      gomod-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "cargo"
+    directory: "/implementations/rust"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    commit-message:
+      prefix: "build(deps)"
+    groups:
+      cargo-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "pip"
+    directory: "/implementations/python"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    commit-message:
+      prefix: "build(deps)"
+    groups:
+      pip-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "npm"
+    directory: "/.github/commitlint"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    commit-message:
+      prefix: "build(deps)"
+    groups:
+      npm-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "docker-compose"
+    directory: "/deployments/docker"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    commit-message:
+      prefix: "build(deps)"
+    groups:
+      docker-compose-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
